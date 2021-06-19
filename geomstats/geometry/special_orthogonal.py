@@ -558,6 +558,35 @@ class _SpecialOrthogonal2Vectors(_SpecialOrthogonalVectors):
         """
         return self.regularize(point - base_point)
 
+    @geomstats.vectorization.decorator(['else', 'vector', 'else'])
+    def jacobian_translation(self, point, left_or_right='left'):
+        """Compute the Jacobian matrix resulting from translation.
+
+        Compute the matrix of the differential of the left/right translations
+        from the identity to point in SO(2).
+
+        Parameters
+        ----------
+        point: array-like, shape=[..., 1]
+            Point.
+        left_or_right: str, {'left', 'right'}
+            Whether to compute the jacobian of the left or right translation.
+            Optional, default: 'left'.
+
+        Returns
+        -------
+        jacobian : array-like, shape=[..., 1]
+            Jacobian of the left / right translation.
+        """
+        if left_or_right not in ('left', 'right'):
+            raise ValueError('`left_or_right` must be `left` or `right`.')
+
+        point = self.regularize(point)
+
+        n_points, _ = point.shape
+
+        return gs.array([gs.eye(self.dim)] * n_points)
+
 
 class _SpecialOrthogonal3Vectors(_SpecialOrthogonalVectors):
     """Class for the special orthogonal group SO(3) in vector representation.
